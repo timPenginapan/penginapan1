@@ -13,7 +13,7 @@ class Dashboard extends CI_Controller{
         // $data['user'] = $this->Model_user->tampil_data();
         $this->load->view('template/header');
         $this->load->view('template/sidebar');
-        $this->load->view('dashboard');
+        $this->load->view('Admin/dashboard');
         $this->load->view('template/footer');
     }
     // public function tambah_user(){
