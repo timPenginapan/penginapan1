@@ -22,7 +22,7 @@
       <div class="col-md-12 grid-margin">
         <div class="d-flex justify-content-between align-items-center">
           <div>
-            <h3 class="font-weight-bold mb-0">Management Reservasi</h3>
+            <h3 class="font-weight-bold mb-0">Management Transaksi</h3>
           </div>
         </div>
       </div>
@@ -37,39 +37,36 @@
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>ID Reservasi</th>
+                    <th>ID Transaksi</th>
                     <th>Customer</th>
                     <th>Penginapan</th>
-                    <th>Check-in</th>
-                    <th>Check-out</th>
-                    <th>Jumlah Kamar</th>
-                    <th>Total Harga</th>
+                    <th>Jumlah Bayar</th>
+                    <th>Metode</th>
                     <th>Status</th>
+                    <th>Tanggal</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <?php if (!empty($reservasi)): ?>
-                    <?php $no = 1; foreach($reservasi as $r): ?>
+                  <?php if (!empty($transaksi)): ?>
+                    <?php $no = 1; foreach($transaksi as $t): ?>
                     <tr>
                       <td><?= $no++ ?></td>
-                      <td>#<?= $r->id_reservasi ?></td>
-                      <td><?= $r->nama_customer ?></td>
-                      <td><?= $r->nama_penginapan ?></td>
-                      <td><?= date('d M Y', strtotime($r->tanggal_checkin)) ?></td>
-                      <td><?= date('d M Y', strtotime($r->tanggal_checkout)) ?></td>
-                      <td><?= $r->jumlah_kamar ?></td>
-                      <td>Rp <?= number_format($r->total_harga, 0, ',', '.') ?></td>
+                      <td>#<?= $t->id_transaksi ?></td>
+                      <td><?= $t->nama_customer ?></td>
+                      <td><?= $t->nama_penginapan ?></td>
+                      <td>Rp <?= number_format($t->jumlah_pembayaran, 0, ',', '.') ?></td>
+                      <td><?= $t->metode_pembayaran ?></td>
                       <td>
-                        <select class="form-control form-control-sm" onchange="updateStatusReservasi(<?= $r->id_reservasi ?>, this.value)">
-                          <option value="pending" <?= $r->status == 'pending' ? 'selected' : '' ?>>Pending</option>
-                          <option value="menunggu_konfirmasi" <?= $r->status == 'menunggu_konfirmasi' ? 'selected' : '' ?>>Menunggu Konfirmasi</option>
-                          <option value="dikonfirmasi" <?= $r->status == 'dikonfirmasi' ? 'selected' : '' ?>>Dikonfirmasi</option>
-                          <option value="dibatalkan" <?= $r->status == 'dibatalkan' ? 'selected' : '' ?>>Dibatalkan</option>
+                        <select class="form-control form-control-sm" onchange="updateStatusTransaksi(<?= $t->id_transaksi ?>, this.value)">
+                          <option value="pending" <?= $t->status_pembayaran == 'pending' ? 'selected' : '' ?>>Pending</option>
+                          <option value="lunas" <?= $t->status_pembayaran == 'lunas' ? 'selected' : '' ?>>Lunas</option>
+                          <option value="gagal" <?= $t->status_pembayaran == 'gagal' ? 'selected' : '' ?>>Gagal</option>
                         </select>
                       </td>
+                      <td><?= date('d M Y H:i', strtotime($t->created_at)) ?></td>
                       <td>
-                        <a href="<?= base_url('admin/reservasi/detail/') . $r->id_reservasi ?>" class="btn btn-info btn-sm">
+                        <a href="<?= base_url('admin/transaksi/detail/') . $t->id_transaksi ?>" class="btn btn-info btn-sm">
                           <i class="icon-eye"></i> Detail
                         </a>
                       </td>
@@ -77,7 +74,7 @@
                     <?php endforeach; ?>
                   <?php else: ?>
                     <tr>
-                      <td colspan="10" class="text-center">Tidak ada data reservasi</td>
+                      <td colspan="9" class="text-center">Tidak ada data transaksi</td>
                     </tr>
                   <?php endif; ?>
                 </tbody>
@@ -91,13 +88,13 @@
 </div>
 
 <script>
-function updateStatusReservasi(id, status) {
-  if (confirm('Apakah Anda yakin ingin mengubah status reservasi?')) {
+function updateStatusTransaksi(id, status) {
+  if (confirm('Apakah Anda yakin ingin mengubah status transaksi?')) {
     $.ajax({
-      url: '<?= base_url('admin/reservasi/update_status') ?>',
+      url: '<?= base_url('admin/transaksi/update_status') ?>',
       type: 'POST',
       data: {
-        id_reservasi: id,
+        id_transaksi: id,
         status: status
       },
       success: function(response) {
